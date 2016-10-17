@@ -262,6 +262,18 @@
           :subname     db}
          (dissoc opts :db)))
 
+(defn mariadb
+   "Create a database specification for a mariadb database. Opts should include keys
+   for :db, :user, and :password. You can also optionally set host and port.
+   Delimiters are automatically set to \"`\"."
+ [{:keys [user password host port db]
+   :or {user "root" password "" host "localhost", port 3306, db ""}
+   :as opts}]
+ (merge {:classname "org.mariadb.jdbc.Driver"
+         :subprotocol "mariadb"
+         :subname     (str "//" host ":" port "/" db "?user=" user "&password=" password "")}
+   (dissoc opts :host :port :db)))
+
 (defmacro transaction
   "Execute all queries within the body in a single transaction.
   Optionally takes as a first argument a map to specify the :isolation and :read-only? properties of the transaction."
