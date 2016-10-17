@@ -289,7 +289,7 @@
 
 (defn- exec-sql [{:keys [results sql-str params]}]
   (let [keys (get-in *current-db* [:options :naming :keys])
-        sql-params (apply vector sql-str params)]
+        sql-params (apply vector (clojure.string/replace sql-str #"\"" "`") params)]
     (case results
       :results (jdbc/query *current-conn* sql-params {:identifiers keys})
       :keys (jdbc/db-do-prepared-return-keys *current-conn* sql-params)
